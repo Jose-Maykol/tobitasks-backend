@@ -1,5 +1,5 @@
 import { InjectModel } from '@nestjs/mongoose'
-import { Project } from '../schemas/projects/project.schema'
+import { Project } from '../schemas/project/project.schema'
 import { Model } from 'mongoose'
 import { Injectable } from '@nestjs/common'
 
@@ -13,7 +13,7 @@ export class ProjectRepository {
 		const createdProject = new this.projectModel(data)
 		return createdProject.save()
 	}
-	/* 
+
 	async findAll(): Promise<Project[]> {
 		return this.projectModel.find().exec()
 	}
@@ -22,7 +22,11 @@ export class ProjectRepository {
 		return this.projectModel.findById(id).exec()
 	}
 
-	async update(
+	async findByName(name: string): Promise<Project | null> {
+		return this.projectModel.findOne({ name }).exec()
+	}
+
+	/* async update(
 		id: string,
 		updateProjectDto: UpdateProjectDto
 	): Promise<Project | null> {

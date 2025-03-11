@@ -8,7 +8,13 @@ export type ProjectDocument = Project & Document
 
 @Schema({ timestamps: true })
 export class Project {
-	@Prop({ required: true, trim: true, minlength: 2, maxlength: 100 })
+	@Prop({
+		required: true,
+		trim: true,
+		minlength: 2,
+		maxlength: 100,
+		unique: true
+	})
 	name: string
 
 	@Prop({ trim: true, maxlength: 500 })
