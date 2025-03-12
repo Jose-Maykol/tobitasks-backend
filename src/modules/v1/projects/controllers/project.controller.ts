@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common'
+import { Body, Controller, Get, Post } from '@nestjs/common'
 import { CreateProjectDto } from '../dtos/create-project.dto'
 import { ProjectsService } from '../services/projects.service'
 
@@ -18,7 +18,14 @@ export class ProjectsController {
 		return project
 	}
 
-	async findAll() {}
+	@Get()
+	async findAll() {
+		const projects = await this.projectService.findAll()
+
+		return {
+			projects
+		}
+	}
 
 	async findOne() {}
 }

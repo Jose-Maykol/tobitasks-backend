@@ -1,6 +1,6 @@
 import { ConflictException, Injectable } from '@nestjs/common'
 import { CreateProjectDto } from '../dtos/create-project.dto'
-import { ProjectRepository } from '../../database/repositories/project.repository.impl'
+import { ProjectRepository } from '../../database/repositories/project.repository'
 
 @Injectable()
 export class ProjectsService {
@@ -14,5 +14,9 @@ export class ProjectsService {
 		if (project) throw new ConflictException('Project already exists')
 
 		return this.projectRepository.create({ name, description })
+	}
+
+	async findAll() {
+		return this.projectRepository.findAll()
 	}
 }

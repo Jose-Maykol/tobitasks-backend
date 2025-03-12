@@ -3,7 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose'
 import { ProjectsController } from './controllers/project.controller'
 import { ProjectSchema } from '../database/schemas/project/project.schema'
 import { ProjectsService } from './services/projects.service'
-import { ProjectRepository } from '../database/repositories/project.repository.impl'
+import { ProjectRepository } from '../database/repositories/project.repository'
 import { ProjectGateway } from './gateways/projects.gateway'
 
 @Module({
