@@ -5,6 +5,7 @@ import { ProjectsModule } from './modules/v1/projects/projects.module'
 import { RouterModule } from '@nestjs/core'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { MongooseModule } from '@nestjs/mongoose'
+import { AuthModule } from './modules/v1/auth/auth.module'
 
 @Module({
 	imports: [
@@ -26,11 +27,16 @@ import { MongooseModule } from '@nestjs/mongoose'
 					{
 						module: ProjectsModule,
 						path: 'projects'
+					},
+					{
+						module: AuthModule,
+						path: 'auth'
 					}
 				]
 			}
 		]),
-		ProjectsModule
+		ProjectsModule,
+		AuthModule
 	],
 	controllers: [AppController],
 	providers: [AppService]
