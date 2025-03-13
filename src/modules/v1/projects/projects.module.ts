@@ -4,7 +4,6 @@ import { ProjectsController } from './controllers/project.controller'
 import { ProjectSchema } from '../database/schemas/project/project.schema'
 import { ProjectsService } from './services/projects.service'
 import { ProjectRepository } from '../database/repositories/project.repository'
-import { ProjectGateway } from './gateways/projects.gateway'
 
 @Module({
 	imports: [
@@ -16,6 +15,6 @@ import { ProjectGateway } from './gateways/projects.gateway'
 		])
 	],
 	controllers: [ProjectsController],
-	providers: [ProjectsService, ProjectRepository, ProjectGateway]
+	providers: [ProjectsService, ProjectRepository]
 })
 export class ProjectsModule {}

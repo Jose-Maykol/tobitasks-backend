@@ -6,6 +6,7 @@ import { RouterModule } from '@nestjs/core'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { MongooseModule } from '@nestjs/mongoose'
 import { AuthModule } from './modules/v1/auth/auth.module'
+import { TaskModule } from './modules/v1/tasks/task.module'
 
 @Module({
 	imports: [
@@ -36,7 +37,8 @@ import { AuthModule } from './modules/v1/auth/auth.module'
 			}
 		]),
 		ProjectsModule,
-		AuthModule
+		AuthModule,
+		TaskModule
 	],
 	controllers: [AppController],
 	providers: [AppService]

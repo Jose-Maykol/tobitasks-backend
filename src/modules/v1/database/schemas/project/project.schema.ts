@@ -21,7 +21,7 @@ export class Project {
 	description: string
 
 	@Prop({ type: Types.ObjectId, ref: 'User' })
-	createdBy?: Types.ObjectId
+	createdBy: Types.ObjectId
 
 	@Prop({ type: [ProjectStageSchema] })
 	stages: ProjectStage[]

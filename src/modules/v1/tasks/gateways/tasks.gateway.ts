@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { Logger } from '@nestjs/common'
 import {
 	ConnectedSocket,
@@ -10,22 +11,26 @@ import {
 	WebSocketServer
 } from '@nestjs/websockets'
 import { Socket, Server } from 'socket.io'
+import { WsAuthMiddleware } from '../../auth/middlewares/ws-auth.middleware'
+import { JwtService } from '@nestjs/jwt'
 
 @WebSocketGateway({
-	namespace: '/project',
+	namespace: '/tasks',
 	cors: {
 		origin: '*'
 	}
 })
-export class ProjectGateway
+export class TaskGateway
 	implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
 	@WebSocketServer() server: Server
 	private logger = new Logger('TaskGateway')
 
-	constructor() {}
+	constructor(private readonly jwtService: JwtService) {}
 
 	afterInit(server: Server) {
+		const wsAuthMiddleware = new WsAuthMiddleware(this.jwtService)
+		server.use(wsAuthMiddleware.use.bind(wsAuthMiddleware))
 		this.logger.log('WebSocket Project Gateway initialized')
 	}
 
@@ -45,8 +50,18 @@ export class ProjectGateway
 		this.logger.log(
 			`Client ${client.id} requested tasks with payload: ${payload}`
 		)
+		const user = client
+		this.logger.log(`User: ${user}`)
 		/* const projectId = client.handshake.query.id || 'No project ID' */
-		client.emit('tasks', { tasks: [] })
+		client.emit('task_list', {
+			tasks: [
+				{
+					id: 1,
+					name: 'Task 1',
+					description: 'Task 1 description'
+				}
+			]
+		})
 	}
 
 	@SubscribeMessage('create_task')
