@@ -13,6 +13,8 @@ import {
 import { Socket, Server } from 'socket.io'
 import { WsAuthMiddleware } from '../../auth/middlewares/ws-auth.middleware'
 import { JwtService } from '@nestjs/jwt'
+import { ConfigService } from '@nestjs/config'
+import { AuthenticatedSocket } from '../../auth/interfaces/authenticated-socket'
 
 @WebSocketGateway({
 	namespace: '/tasks',
@@ -26,32 +28,38 @@ export class TaskGateway
 	@WebSocketServer() server: Server
 	private logger = new Logger('TaskGateway')
 
-	constructor(private readonly jwtService: JwtService) {}
+	constructor(
+		private readonly jwtService: JwtService,
+		private readonly configService: ConfigService
+	) {}
 
 	afterInit(server: Server) {
-		const wsAuthMiddleware = new WsAuthMiddleware(this.jwtService)
+		const wsAuthMiddleware = new WsAuthMiddleware(
+			this.jwtService,
+			this.configService
+		)
 		server.use(wsAuthMiddleware.use.bind(wsAuthMiddleware))
 		this.logger.log('WebSocket Project Gateway initialized')
 	}
 
-	handleConnection(client: Socket) {
+	handleConnection(client: AuthenticatedSocket) {
 		this.logger.log(`Client connected: ${client.id}`)
 	}
 
-	handleDisconnect(client: Socket) {
+	handleDisconnect(client: AuthenticatedSocket) {
 		this.logger.log(`Client disconnected: ${client.id}`)
 	}
 
 	@SubscribeMessage('get_tasks')
 	handleGetTasks(
-		@ConnectedSocket() client: Socket,
+		@ConnectedSocket() client: AuthenticatedSocket,
 		@MessageBody() payload: any
 	) {
 		this.logger.log(
 			`Client ${client.id} requested tasks with payload: ${payload}`
 		)
-		const user = client
-		this.logger.log(`User: ${user}`)
+		const user = client.data.user
+		this.logger.log(`User: ${JSON.stringify(user)}`)
 		/* const projectId = client.handshake.query.id || 'No project ID' */
 		client.emit('task_list', {
 			tasks: [

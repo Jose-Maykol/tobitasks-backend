@@ -1,14 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 import { Injectable, NestMiddleware } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { AuthenticatedSocket } from '../interfaces/authenticated-socket'
+import { JwtPayload } from '../interfaces/jwt-payload'
+import { ConfigService } from '@nestjs/config'
 
 @Injectable()
 export class WsAuthMiddleware implements NestMiddleware {
-	constructor(private jwtService: JwtService) {}
+	constructor(
+		private jwtService: JwtService,
+		private configService: ConfigService
+	) {}
 
-	async use(socket: AuthenticatedSocket, next: (err?: Error) => void) {
+	use(socket: AuthenticatedSocket, next: (err?: Error) => void) {
 		try {
 			const token: string =
 				(socket.handshake.auth.token as string) ||
@@ -18,13 +23,19 @@ export class WsAuthMiddleware implements NestMiddleware {
 				return next(new Error('Token no encontrado'))
 			}
 
-			console.log('Token:', token)
+			let payload: JwtPayload | null = null
 
-			const payload = await this.jwtService.verify(token)
-
-			console.log('Payload:', payload)
-
-			socket.user = payload
+			try {
+				payload = this.jwtService.verify<JwtPayload>(token, {
+					secret: this.configService.get<string>('SECRET_KEY')
+				})
+			} catch (error) {
+				return next(new Error('Token inválido'))
+			}
+			socket.data.user = {
+				id: payload.sub,
+				email: payload.email
+			}
 			next()
 		} catch (error) {
 			next(new Error('No autorizado'))
