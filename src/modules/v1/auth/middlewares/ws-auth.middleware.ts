@@ -23,19 +23,17 @@ export class WsAuthMiddleware implements NestMiddleware {
 				return next(new Error('Token no encontrado'))
 			}
 
-			let payload: JwtPayload | null = null
+			const secretKey = this.configService.get<string>('SECRET_KEY')
 
-			try {
-				payload = this.jwtService.verify<JwtPayload>(token, {
-					secret: this.configService.get<string>('SECRET_KEY')
-				})
-			} catch (error) {
-				return next(new Error('Token inválido'))
-			}
+			const payload = this.jwtService.verify<JwtPayload>(token, {
+				secret: secretKey
+			})
+
 			socket.data.user = {
 				id: payload.sub,
 				email: payload.email
 			}
+
 			next()
 		} catch (error) {
 			next(new Error('No autorizado'))
