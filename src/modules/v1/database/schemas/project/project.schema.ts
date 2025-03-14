@@ -6,6 +6,21 @@ import { ProjectMember, ProjectMemberSchema } from './project-member.schema'
 
 export type ProjectDocument = Project & Document
 
+export enum ProjectColors {
+	NEUTRAL = 'neutral-600',
+	BLUE = 'blue-600',
+	PURPLE = 'purple-600',
+	VIOLET = 'violet-600',
+	GREEN = 'green-600'
+}
+
+export enum ProjectStatus {
+	OPEN = 'open',
+	IN_PROGRESS = 'in progress',
+	DONE = 'done',
+	BLOCKED = 'blocked'
+}
+
 @Schema({ timestamps: true })
 export class Project {
 	@Prop({
@@ -19,6 +34,13 @@ export class Project {
 
 	@Prop({ trim: true, maxlength: 500 })
 	description: string
+
+	@Prop({
+		type: String,
+		enum: Object.values(ProjectColors),
+		default: ProjectColors.NEUTRAL
+	})
+	primaryColor: string
 
 	@Prop({ type: Types.ObjectId, ref: 'User' })
 	createdBy: Types.ObjectId
@@ -34,7 +56,7 @@ export class Project {
 
 	@Prop({
 		type: String,
-		enum: ['open', 'in progress', 'done', 'blocked'],
+		enum: Object.values(ProjectStatus),
 		default: 'open'
 	})
 	status: string
