@@ -1,6 +1,6 @@
 import { InjectModel } from '@nestjs/mongoose'
 import { Project } from '../schemas/project/project.schema'
-import { Model } from 'mongoose'
+import { Model, Types } from 'mongoose'
 import { Injectable } from '@nestjs/common'
 
 @Injectable()
@@ -16,6 +16,12 @@ export class ProjectRepository {
 
 	async findAll(): Promise<Project[]> {
 		return this.projectModel.find().exec()
+	}
+
+	async findByUserId(userId: string): Promise<Project[]> {
+		return this.projectModel
+			.find({ createdBy: new Types.ObjectId(userId) })
+			.exec()
 	}
 
 	async findById(id: string): Promise<Project | null> {

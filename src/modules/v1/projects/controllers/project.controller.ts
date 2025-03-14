@@ -26,8 +26,10 @@ export class ProjectsController {
 	}
 
 	@Get()
-	async findAll() {
-		const projects = await this.projectService.findAll()
+	@UseGuards(JwtAuthGuard)
+	async findAll(@Req() req: Request & { user: JwtPayload }) {
+		const { sub: userId } = req.user
+		const projects = await this.projectService.findAll(userId)
 
 		return {
 			projects

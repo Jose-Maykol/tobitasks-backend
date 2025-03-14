@@ -24,15 +24,30 @@ export class ProjectsService {
 
 		this.logger.log(`Creating project ${name}`)
 
-		return this.projectRepository.create({
+		const newProject = await this.projectRepository.create({
 			name,
 			description,
 			stages: DEFAULT_STAGES,
 			createdBy: new ObjectId(data.userId)
 		})
+
+		return {
+			success: true,
+			data: {
+				...newProject
+			},
+			code: 201
+		}
 	}
 
-	async findAll() {
-		return this.projectRepository.findAll()
+	async findAll(userId: string) {
+		console.log('userId', userId)
+		const projects = await this.projectRepository.findByUserId(userId)
+
+		return {
+			success: true,
+			data: projects,
+			code: 200
+		}
 	}
 }
