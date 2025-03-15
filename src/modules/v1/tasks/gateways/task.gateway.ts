@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-import { Logger } from '@nestjs/common'
+import { Logger, UsePipes, ValidationPipe } from '@nestjs/common'
 import {
 	ConnectedSocket,
 	MessageBody,
@@ -10,11 +10,13 @@ import {
 	WebSocketGateway,
 	WebSocketServer
 } from '@nestjs/websockets'
-import { Socket, Server } from 'socket.io'
+import { Server } from 'socket.io'
 import { WsAuthMiddleware } from '../../auth/middlewares/ws-auth.middleware'
 import { JwtService } from '@nestjs/jwt'
 import { ConfigService } from '@nestjs/config'
 import { AuthenticatedSocket } from '../../auth/interfaces/authenticated-socket'
+import { TaskService } from '../services/task.service'
+import { CreateTaskDto } from '../dtos/create-task.dto'
 
 @WebSocketGateway({
 	namespace: '/tasks',
@@ -30,7 +32,8 @@ export class TaskGateway
 
 	constructor(
 		private readonly jwtService: JwtService,
-		private readonly configService: ConfigService
+		private readonly configService: ConfigService,
+		private readonly taskService: TaskService
 	) {}
 
 	afterInit(server: Server) {
@@ -56,7 +59,7 @@ export class TaskGateway
 		@MessageBody() payload: any
 	) {
 		this.logger.log(
-			`Client ${client.id} requested tasks with payload: ${payload}`
+			`Client ${client.id} requested tasks with payload: ${JSON.stringify(payload)}`
 		)
 		const user = client.data.user
 		this.logger.log(`User: ${JSON.stringify(user)}`)
@@ -73,9 +76,17 @@ export class TaskGateway
 	}
 
 	@SubscribeMessage('create_task')
-	createTask(client: Socket, payload: any) {
-		this.logger.log(
-			`Client ${client.id} created a task with payload: ${payload}`
-		)
+	@UsePipes(new ValidationPipe())
+	createTask(
+		@ConnectedSocket() client: AuthenticatedSocket,
+		@MessageBody() payload: CreateTaskDto
+	) {
+		const user = client.data.user
+		this.logger.log(`Client ${user.id} requested to create a task`)
+		const newTask = this.taskService.create({
+			...payload,
+			userId: user.id
+		})
+		client.emit('task_created', newTask)
 	}
 }
