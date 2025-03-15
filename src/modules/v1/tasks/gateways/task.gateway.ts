@@ -17,6 +17,7 @@ import { ConfigService } from '@nestjs/config'
 import { AuthenticatedSocket } from '../../auth/interfaces/authenticated-socket'
 import { TaskService } from '../services/task.service'
 import { CreateTaskDto } from '../dtos/create-task.dto'
+import { GetTasksDto } from '../dtos/get-task.dto'
 
 @WebSocketGateway({
 	namespace: '/tasks',
@@ -54,25 +55,15 @@ export class TaskGateway
 	}
 
 	@SubscribeMessage('get_tasks')
-	handleGetTasks(
+	@UsePipes(new ValidationPipe())
+	async handleGetTasks(
 		@ConnectedSocket() client: AuthenticatedSocket,
-		@MessageBody() payload: any
+		@MessageBody() payload: GetTasksDto
 	) {
-		this.logger.log(
-			`Client ${client.id} requested tasks with payload: ${JSON.stringify(payload)}`
-		)
 		const user = client.data.user
-		this.logger.log(`User: ${JSON.stringify(user)}`)
-		/* const projectId = client.handshake.query.id || 'No project ID' */
-		client.emit('task_list', {
-			tasks: [
-				{
-					id: 1,
-					name: 'Task 1',
-					description: 'Task 1 description'
-				}
-			]
-		})
+		this.logger.log(`Client ${user.id} requested to get tasks`)
+		const tasks = await this.taskService.findByProjectId(payload.projectId)
+		client.emit('task_list', tasks)
 	}
 
 	@SubscribeMessage('create_task')
