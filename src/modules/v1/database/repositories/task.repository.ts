@@ -1,0 +1,22 @@
+import { Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/mongoose'
+import { Task } from '../schemas/task/task.schema'
+import { Model } from 'mongoose'
+
+@Injectable()
+export class TaskRepository {
+	constructor(@InjectModel(Task.name) private taskModel: Model<Task>) {}
+
+	async create(data: Partial<Task>): Promise<Task> {
+		const createdTask = new this.taskModel(data)
+		return createdTask.save()
+	}
+
+	async findByProjectId(projectId: string): Promise<Task[]> {
+		return this.taskModel.find({ projectId }).exec()
+	}
+
+	async findById(id: string): Promise<Task | null> {
+		return this.taskModel.findById(id).exec()
+	}
+}
