@@ -17,9 +17,9 @@ export class ProjectsService {
 		if (project) throw new ConflictException('Project already exists')
 
 		const DEFAULT_STAGES = [
-			{ name: 'En planificación', order: 0, color: 'neutral-600' },
-			{ name: 'En progreso', order: 1, color: 'blue-600' },
-			{ name: 'Hecho', order: 2, color: 'green-600' }
+			{ name: 'En planificación', order: 0, color: 'neutral' },
+			{ name: 'En progreso', order: 1, color: 'blue' },
+			{ name: 'Hecho', order: 2, color: 'green' }
 		]
 
 		this.logger.log(`Creating project ${name}`)
@@ -46,7 +46,9 @@ export class ProjectsService {
 
 		return {
 			success: true,
-			data: projects,
+			data: {
+				projects
+			},
 			code: 200
 		}
 	}

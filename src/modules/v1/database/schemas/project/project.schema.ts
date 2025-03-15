@@ -7,11 +7,11 @@ import { ProjectMember, ProjectMemberSchema } from './project-member.schema'
 export type ProjectDocument = Project & Document
 
 export enum ProjectColors {
-	NEUTRAL = 'neutral-600',
-	BLUE = 'blue-600',
-	PURPLE = 'purple-600',
-	VIOLET = 'violet-600',
-	GREEN = 'green-600'
+	NEUTRAL = 'neutral',
+	BLUE = 'blue',
+	PURPLE = 'purple',
+	VIOLET = 'violet',
+	GREEN = 'green'
 }
 
 export enum ProjectStatus {

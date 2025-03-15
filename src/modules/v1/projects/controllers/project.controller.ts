@@ -31,9 +31,7 @@ export class ProjectsController {
 		const { sub: userId } = req.user
 		const projects = await this.projectService.findAll(userId)
 
-		return {
-			projects
-		}
+		return projects
 	}
 
 	async findOne() {}

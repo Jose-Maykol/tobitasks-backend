@@ -4,11 +4,11 @@ import { Document } from 'mongoose'
 export type ProjectStageDocument = ProjectStage & Document
 
 enum StageColors {
-	NEUTRAL = 'neutral-600',
-	BLUE = 'blue-600',
-	GREEN = 'green-600',
-	YELLOW = 'yellow-600',
-	RED = 'red-600'
+	NEUTRAL = 'neutral',
+	BLUE = 'blue',
+	GREEN = 'green',
+	YELLOW = 'yellow',
+	RED = 'red'
 }
 
 @Schema()
