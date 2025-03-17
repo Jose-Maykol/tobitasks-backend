@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common'
+import {
+	Body,
+	Controller,
+	Get,
+	Param,
+	Post,
+	Req,
+	UseGuards
+} from '@nestjs/common'
 import { CreateProjectDto } from '../dtos/create-project.dto'
 import { ProjectsService } from '../services/projects.service'
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard'
@@ -34,5 +42,15 @@ export class ProjectsController {
 		return projects
 	}
 
-	async findOne() {}
+	@Get(':uuid')
+	@UseGuards(JwtAuthGuard)
+	async findOne(
+		@Req() req: Request & { user: JwtPayload },
+		@Param('uuid') uuid: string
+	) {
+		/* const { sub: userId } = req.user */
+		const project = await this.projectService.findOne(uuid)
+
+		return project
+	}
 }

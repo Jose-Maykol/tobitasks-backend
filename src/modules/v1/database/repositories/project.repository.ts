@@ -24,11 +24,11 @@ export class ProjectRepository {
 			.exec()
 	}
 
-	async findById(id: string): Promise<Project | null> {
+	async findOneById(id: string): Promise<Project | null> {
 		return this.projectModel.findById(id).exec()
 	}
 
-	async findByName(name: string): Promise<Project | null> {
+	async findOneByName(name: string): Promise<Project | null> {
 		return this.projectModel.findOne({ name }).exec()
 	}
 

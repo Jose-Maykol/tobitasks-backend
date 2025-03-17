@@ -12,7 +12,7 @@ export class ProjectsService {
 	async create(data: CreateProjectDto & { userId: string }) {
 		const { name, description } = data
 
-		const project = await this.projectRepository.findByName(name)
+		const project = await this.projectRepository.findOneByName(name)
 
 		if (project) throw new ConflictException('Project already exists')
 
@@ -41,13 +41,23 @@ export class ProjectsService {
 	}
 
 	async findAll(userId: string) {
-		console.log('userId', userId)
 		const projects = await this.projectRepository.findByUserId(userId)
 
 		return {
 			success: true,
 			data: {
 				projects
+			},
+			code: 200
+		}
+	}
+
+	async findOne(uuid: string) {
+		const project = await this.projectRepository.findOneById(uuid)
+		return {
+			success: true,
+			data: {
+				project
 			},
 			code: 200
 		}
