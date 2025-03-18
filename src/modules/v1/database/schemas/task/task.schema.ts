@@ -6,7 +6,17 @@ export type TaskDocument = Task & Document
 
 @Schema({
 	timestamps: true,
-	toJSON: { virtuals: true },
+	toJSON: {
+		transform: (
+			doc: Document,
+			ret: { _id?: string; __v?: number; [key: string]: any }
+		) => {
+			ret.id = ret._id
+			delete ret._id
+			delete ret.__v
+			return ret
+		}
+	},
 	toObject: { virtuals: true }
 })
 export class Task extends Document {

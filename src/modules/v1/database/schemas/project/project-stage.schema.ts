@@ -11,7 +11,19 @@ enum StageColors {
 	RED = 'red'
 }
 
-@Schema()
+@Schema({
+	toJSON: {
+		transform: (
+			doc: Document,
+			ret: { _id?: string; __v?: number; [key: string]: any }
+		) => {
+			ret.id = ret._id
+			delete ret._id
+			delete ret.__v
+			return ret
+		}
+	}
+})
 export class ProjectStage {
 	@Prop({ required: true, trim: true })
 	name: string

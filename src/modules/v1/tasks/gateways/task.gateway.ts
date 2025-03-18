@@ -22,8 +22,10 @@ import { GetTasksDto } from '../dtos/get-task.dto'
 @WebSocketGateway({
 	namespace: '/tasks',
 	cors: {
-		origin: '*'
-	}
+		origin: ['http://localhost:3000', 'http://localhost:5173'],
+		credentials: true
+	},
+	transports: ['websocket', 'polling']
 })
 export class TaskGateway
 	implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
@@ -54,7 +56,7 @@ export class TaskGateway
 		this.logger.log(`Client disconnected: ${client.id}`)
 	}
 
-	@SubscribeMessage('get_tasks')
+	@SubscribeMessage('getTasks')
 	@UsePipes(new ValidationPipe())
 	async handleGetTasks(
 		@ConnectedSocket() client: AuthenticatedSocket,
@@ -63,10 +65,10 @@ export class TaskGateway
 		const user = client.data.user
 		this.logger.log(`Client ${user.id} requested to get tasks`)
 		const tasks = await this.taskService.findByProjectId(payload.projectId)
-		client.emit('task_list', tasks)
+		client.emit('taskList', tasks)
 	}
 
-	@SubscribeMessage('create_task')
+	@SubscribeMessage('createTask')
 	@UsePipes(new ValidationPipe())
 	createTask(
 		@ConnectedSocket() client: AuthenticatedSocket,
