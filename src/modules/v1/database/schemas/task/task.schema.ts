@@ -35,6 +35,9 @@ export class Task extends Document {
 	@Prop({ type: Types.ObjectId, ref: 'Project.stages', required: true })
 	stageId: Types.ObjectId
 
+	@Prop({ type: Number, required: true })
+	sortOrder: number
+
 	/* @Prop([{ type: Types.ObjectId, ref: 'Project.tags' }])
 	tags: Types.ObjectId[]
 
@@ -49,9 +52,6 @@ export class Task extends Document {
 
 	@Prop({ type: Number })
 	timeSpent?: number
-
-	@Prop({ type: Number, required: true })
-	sortOrder: number
 
 	@Prop({ type: Date })
 	dueDate?: Date

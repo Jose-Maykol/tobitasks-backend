@@ -21,4 +21,16 @@ export class TaskRepository {
 	async findById(id: string): Promise<Task | null> {
 		return this.taskModel.findById(id).exec()
 	}
+
+	async getLastTaskOrder(projectId: string, stageId: string): Promise<number> {
+		const lastTask = await this.taskModel
+			.findOne({
+				projectId: new Types.ObjectId(projectId),
+				stageId: new Types.ObjectId(stageId)
+			})
+			.sort({ sortOrder: -1 })
+			.exec()
+
+		return lastTask ? lastTask.sortOrder : 0
+	}
 }

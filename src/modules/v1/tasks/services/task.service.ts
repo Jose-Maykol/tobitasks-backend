@@ -9,7 +9,13 @@ export class TaskService {
 	constructor(private readonly taskRepository: TaskRepository) {}
 
 	async create(data: CreateTaskDto & { userId: string }): Promise<Task> {
+		const newSortOrder = await this.taskRepository.getLastTaskOrder(
+			data.projectId,
+			data.stageId
+		)
+
 		const newTask = await this.taskRepository.create({
+			sortOrder: newSortOrder + 1,
 			title: data.title,
 			description: data.description,
 			createdBy: new Types.ObjectId(data.userId),

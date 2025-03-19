@@ -70,16 +70,16 @@ export class TaskGateway
 
 	@SubscribeMessage('createTask')
 	@UsePipes(new ValidationPipe())
-	createTask(
+	async createTask(
 		@ConnectedSocket() client: AuthenticatedSocket,
 		@MessageBody() payload: CreateTaskDto
 	) {
 		const user = client.data.user
 		this.logger.log(`Client ${user.id} requested to create a task`)
-		const newTask = this.taskService.create({
+		const newTask = await this.taskService.create({
 			...payload,
 			userId: user.id
 		})
-		client.emit('task_created', newTask)
+		client.emit('taskCreated', newTask)
 	}
 }
