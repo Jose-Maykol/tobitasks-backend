@@ -3,6 +3,7 @@ import { TaskRepository } from '../../database/repositories/task.repository'
 import { Task } from '../../database/schemas/task/task.schema'
 import { CreateTaskDto } from '../dtos/create-task.dto'
 import { Types } from 'mongoose'
+import { UpdateTaskDto } from '../dtos/update-task.dto'
 
 @Injectable()
 export class TaskService {
@@ -23,6 +24,14 @@ export class TaskService {
 			stageId: new Types.ObjectId(data.stageId)
 		})
 		return newTask
+	}
+
+	async update(id: string, data: UpdateTaskDto): Promise<Task | null> {
+		const updatedTask = await this.taskRepository.update(id, {
+			...data,
+			stageId: data.stageId ? new Types.ObjectId(data.stageId) : undefined
+		})
+		return updatedTask
 	}
 
 	async findByProjectId(projectId: string): Promise<Task[]> {

@@ -15,7 +15,12 @@ export class TaskRepository {
 	async findByProjectId(projectId: string): Promise<Task[]> {
 		return this.taskModel
 			.find({ projectId: new Types.ObjectId(projectId) })
+			.sort({ sortOrder: 1 })
 			.exec()
+	}
+
+	async update(id: string, data: Partial<Task>): Promise<Task | null> {
+		return this.taskModel.findByIdAndUpdate(id, data, { new: true }).exec()
 	}
 
 	async findById(id: string): Promise<Task | null> {

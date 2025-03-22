@@ -18,6 +18,7 @@ import { AuthenticatedSocket } from '../../auth/interfaces/authenticated-socket'
 import { TaskService } from '../services/task.service'
 import { CreateTaskDto } from '../dtos/create-task.dto'
 import { GetTasksDto } from '../dtos/get-task.dto'
+import { UpdateTaskDto } from '../dtos/update-task.dto'
 
 @WebSocketGateway({
 	namespace: '/tasks',
@@ -81,5 +82,17 @@ export class TaskGateway
 			userId: user.id
 		})
 		client.emit('taskCreated', newTask)
+	}
+
+	@SubscribeMessage('updateTask')
+	@UsePipes(new ValidationPipe())
+	async updateTask(
+		@ConnectedSocket() client: AuthenticatedSocket,
+		@MessageBody() payload: UpdateTaskDto
+	) {
+		const user = client.data.user
+		this.logger.log(`Client ${user.id} requested to update a task`)
+		const updatedTask = await this.taskService.update(payload.id, payload)
+		client.broadcast.emit('taskUpdated', updatedTask)
 	}
 }
