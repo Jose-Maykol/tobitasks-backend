@@ -95,4 +95,16 @@ export class TaskGateway
 		const updatedTask = await this.taskService.update(payload.id, payload)
 		client.broadcast.emit('taskUpdated', updatedTask)
 	}
+
+	@SubscribeMessage('deleteTask')
+	@UsePipes(new ValidationPipe())
+	async deleteTask(
+		@ConnectedSocket() client: AuthenticatedSocket,
+		@MessageBody() payload: { id: string }
+	) {
+		const user = client.data.user
+		this.logger.log(`Client ${user.id} requested to delete a task`)
+		const deletedTask = await this.taskService.delete(payload.id)
+		client.broadcast.emit('taskDeleted', deletedTask)
+	}
 }

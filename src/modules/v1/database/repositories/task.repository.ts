@@ -38,4 +38,8 @@ export class TaskRepository {
 
 		return lastTask ? lastTask.sortOrder : 0
 	}
+
+	async delete(id: string): Promise<Task | null> {
+		return this.taskModel.findByIdAndDelete(id).exec()
+	}
 }
